@@ -1,10 +1,25 @@
-import React from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 const Profile = () => {
+  const navigation = useNavigation();
+
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>Profile</Text>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity
+          onPress={() => navigation.openDrawer()}
+          style={styles.menuButton}>
+          <Text style={styles.menuText}>☰</Text>
+        </TouchableOpacity>
+        <Text style={styles.header}>Profile</Text>
+      </View>
 
       <View style={styles.card}>
         <Text style={styles.label}>Name</Text>
@@ -25,11 +40,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     padding: 16,
   },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  menuButton: {
+    padding: 8,
+  },
+  menuText: {
+    fontSize: 24,
+    color: '#25A0DD',
+  },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#25A0DD',
-    marginBottom: 16,
+    marginLeft: 12,
   },
   card: {
     backgroundColor: '#FFFFFF',

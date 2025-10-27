@@ -2,13 +2,13 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-const events = [
-  {id: '1', title: 'Parent Meeting', date: 'Oct 28, 2025', time: '9:00 AM'},
-  {id: '2', title: 'Story Time', date: 'Oct 29, 2025', time: '10:30 AM'},
-  {id: '3', title: 'Music Class', date: 'Oct 30, 2025', time: '11:00 AM'},
+const reminders = [
+  {id: '1', text: 'Send photo updates to parents'},
+  {id: '2', text: 'Complete attendance check by 9 AM'},
+  {id: '3', text: 'Prepare snacks for afternoon session'},
 ];
 
-export default function CalendarScreen() {
+export default function RemindersScreen() {
   const navigation = useNavigation();
 
   return (
@@ -19,17 +19,15 @@ export default function CalendarScreen() {
           style={styles.menuButton}>
           <Text style={styles.menuText}>☰</Text>
         </TouchableOpacity>
-        <Text style={styles.header}>Upcoming Events</Text>
+        <Text style={styles.header}>Reminders</Text>
       </View>
 
       <FlatList
-        data={events}
+        data={reminders}
         keyExtractor={item => item.id}
         renderItem={({item}) => (
           <View style={styles.card}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.date}>{item.date}</Text>
-            <Text style={styles.time}>{item.time}</Text>
+            <Text style={styles.text}>• {item.text}</Text>
           </View>
         )}
       />
@@ -38,11 +36,11 @@ export default function CalendarScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 16, backgroundColor: '#F9FAFB'},
+  container: {flex: 1, backgroundColor: '#F9FAFB', padding: 16},
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
   },
   menuButton: {
     padding: 8,
@@ -59,12 +57,10 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#fff',
-    padding: 16,
+    padding: 14,
     borderRadius: 12,
     marginBottom: 10,
     elevation: 2,
   },
-  title: {fontWeight: 'bold', fontSize: 16, color: '#333'},
-  date: {color: '#777', marginTop: 4},
-  time: {color: '#999', marginTop: 2},
+  text: {color: '#333', fontSize: 15},
 });

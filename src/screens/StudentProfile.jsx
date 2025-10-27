@@ -1,7 +1,5 @@
-import {useState} from 'react';
+import React from 'react';
 import {
-  FlatList,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -9,155 +7,59 @@ import {
   View,
 } from 'react-native';
 
-import AddMomentModal from '../components/AddMomentModal';
-
-const StudentProfile = ({route}) => {
-  const {student} = route.params;
-  const [moments, setMoments] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const handleAddMoment = moment => setMoments(prev => [moment, ...prev]);
+export default function StudentProfile({route, navigation}) {
+  const {student} = route.params || {student: {name: 'Unknown'}};
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Image
-          source={{uri: student.avatar || 'https://via.placeholder.com/100'}}
-          style={styles.avatar}
-        />
-        <Text style={styles.name}>{student.name}</Text>
-        <Text style={styles.className}>{student.className}</Text>
+      <Text style={styles.name}>{student.name}</Text>
+      <Text style={styles.subtitle}>Activity Feed</Text>
+
+      <View style={styles.activityCard}>
+        <Text>{student.name} checked in (by Staff Alana Fig)</Text>
+        <Text style={styles.time}>8:00 AM</Text>
       </View>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate('ActivitiesModal', {student})}>
+        <Text style={styles.addButtonText}>Add Activity</Text>
+      </TouchableOpacity>
 
-      {/* Moments Section */}
-      <View style={styles.momentsSection}>
-        <Text style={styles.momentsTitle}>Moments</Text>
-
-        {moments.length === 0 ? (
-          <Text style={styles.placeholderText}>No moments yet.</Text>
-        ) : (
-          <FlatList
-            data={moments}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({item}) => (
-              <View style={styles.momentCard}>
-                <Text style={styles.momentType}>{item.type}</Text>
-                <Text style={styles.momentNote}>{item.note}</Text>
-                {item.image && (
-                  <Image
-                    source={{uri: item.image}}
-                    style={styles.momentImage}
-                  />
-                )}
-                <Text style={styles.momentTime}>
-                  {new Date(item.id).toLocaleString()}
-                </Text>
-              </View>
-            )}
-          />
-        )}
-
-        <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          style={styles.addButton}>
-          <Text style={styles.addButtonText}>+ Add Moment</Text>
-        </TouchableOpacity>
-      </View>
-
-      <AddMomentModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onSave={handleAddMoment}
-      />
+      <TouchableOpacity
+        style={styles.profileButton}
+        onPress={() => navigation.navigate('StudentDetails', {student})}>
+        <Text style={styles.profileButtonText}>View Profile</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-    padding: 16,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  avatar: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    marginBottom: 8,
-  },
-  name: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#111827',
-  },
-  className: {
-    fontSize: 14,
-    color: '#6B7280',
-  },
-  momentsSection: {
-    marginBottom: 16,
-  },
-  momentsTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 8,
-  },
-  placeholderText: {
-    textAlign: 'center',
-    color: '#6B7280',
-    paddingVertical: 16,
-  },
-  momentCard: {
-    backgroundColor: '#FFFFFF',
+  container: {flex: 1, padding: 16, backgroundColor: '#F9FAFB'},
+  name: {fontSize: 22, fontWeight: 'bold', color: '#25A0DD', marginBottom: 8},
+  subtitle: {fontSize: 16, color: '#555', marginBottom: 10},
+  activityCard: {
+    backgroundColor: '#fff',
     padding: 12,
-    borderRadius: 16,
-    marginBottom: 8,
-    // Shadow for iOS
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    // Elevation for Android
-    elevation: 2,
+    borderRadius: 10,
+    marginBottom: 12,
+    elevation: 1,
   },
-  momentType: {
-    fontWeight: '600',
-    fontSize: 16,
-    color: '#111827',
-  },
-  momentNote: {
-    marginTop: 4,
-    color: '#4B5563',
-  },
-  momentImage: {
-    width: '100%',
-    height: 160,
-    borderRadius: 16,
-    marginTop: 8,
-  },
-  momentTime: {
-    marginTop: 4,
-    fontSize: 12,
-    color: '#9CA3AF',
-  },
+  time: {color: '#777', fontSize: 12, marginTop: 4},
   addButton: {
     backgroundColor: '#25A0DD',
-    borderRadius: 16,
-    paddingVertical: 12,
-    marginTop: 12,
+    padding: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
   },
-  addButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-    textAlign: 'center',
-    fontSize: 16,
+  addButtonText: {color: '#fff', fontWeight: '600'},
+  profileButton: {
+    padding: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+    backgroundColor: '#E5E7EB',
   },
+  profileButtonText: {color: '#333', fontWeight: '600'},
 });
-
-export default StudentProfile;

@@ -1756,6 +1756,16 @@
     use-latest-callback "^0.2.4"
     use-sync-external-store "^1.5.0"
 
+"@react-navigation/drawer@^7.6.0":
+  version "7.6.0"
+  resolved "https://registry.yarnpkg.com/@react-navigation/drawer/-/drawer-7.6.0.tgz#43b6039597b43fc7a253819f8aa96ae616fc9af2"
+  integrity sha512-AUl0DsWypwpRadznQ7umxn+Ktu8DOi9+rDAJu6S6ues0I99pkPuvtwWuf4s6ZP220LkdycrNYAV18lK6SCjM3w==
+  dependencies:
+    "@react-navigation/elements" "^2.7.0"
+    color "^4.2.3"
+    react-native-drawer-layout "^4.2.0"
+    use-latest-callback "^0.2.4"
+
 "@react-navigation/elements@^2.7.0":
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-2.7.0.tgz#1d340b8815f9cea48cd48a9a0f079662fb0db943"
@@ -5586,6 +5596,14 @@ react-native-calendars@^1.1313.0:
     xdate "^0.8.0"
   optionalDependencies:
     moment "^2.29.4"
+
+react-native-drawer-layout@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-drawer-layout/-/react-native-drawer-layout-4.2.0.tgz#8b178c883aa6496b8259b2b7e72e296308dcf975"
+  integrity sha512-XFGK5RMcVhEqr2F4iH/cTXrcTm1uK3gIBNFPqHNO7rCXuXZTPBbQYA5yc9/Lqgw2KNQ3sAeHKvW6/WoTURo/eA==
+  dependencies:
+    color "^4.2.3"
+    use-latest-callback "^0.2.4"
 
 react-native-gesture-handler@^2.29.0:
   version "2.29.0"
