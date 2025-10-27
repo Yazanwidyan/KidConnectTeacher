@@ -1,53 +1,51 @@
-import React from 'react';
-import {
-  Alert,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, {useState} from 'react';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-const students = [
+const studentsList = [
   {id: 1, name: 'Adam Smith'},
-  {id: 2, name: 'Josh Finkle'},
-  {id: 3, name: 'Mia Rodriquez'},
-  {id: 4, name: 'Michael Lee'},
-  {id: 5, name: 'Russ Palmer'},
-  {id: 6, name: 'Steven King'},
+  {id: 2, name: 'Mia Rodriguez'},
+  {id: 3, name: 'Josh Finkle'},
 ];
 
 export default function SelectStudentScreen({route, navigation}) {
   const {activity} = route.params;
+  const [selected, setSelected] = useState([]);
 
-  const handleSelectStudent = student => {
-    // Log the activity
-    console.log(`${activity.name} logged for ${student.name}`);
-
-    Alert.alert(
-      'Activity Logged',
-      `${activity.name} added for ${student.name}`,
-      [{text: 'OK', onPress: () => navigation.goBack()}],
+  const toggleSelect = id => {
+    setSelected(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id],
     );
+  };
+
+  const handleNext = () => {
+    const selectedStudents = studentsList.filter(s => selected.includes(s.id));
+    navigation.navigate('ActivityDetails', {activity, selectedStudents});
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>
-        Select a Student for {activity.name} {activity.icon}
-      </Text>
+      <Text style={styles.header}>Select Students for {activity.name}</Text>
 
       <FlatList
-        data={students}
+        data={studentsList}
         keyExtractor={item => item.id.toString()}
         renderItem={({item}) => (
           <TouchableOpacity
-            style={styles.studentButton}
-            onPress={() => handleSelectStudent(item)}>
+            style={[
+              styles.item,
+              selected.includes(item.id) && styles.selectedItem,
+            ]}
+            onPress={() => toggleSelect(item.id)}>
             <Text style={styles.name}>{item.name}</Text>
           </TouchableOpacity>
         )}
       />
+
+      {selected.length > 0 && (
+        <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+          <Text style={styles.nextText}>Next</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -55,17 +53,26 @@ export default function SelectStudentScreen({route, navigation}) {
 const styles = StyleSheet.create({
   container: {flex: 1, padding: 16, backgroundColor: '#F9FAFB'},
   header: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#25A0DD',
     marginBottom: 16,
   },
-  studentButton: {
+  item: {
     backgroundColor: '#fff',
-    padding: 16,
+    padding: 14,
     borderRadius: 12,
-    marginBottom: 8,
+    marginBottom: 10,
     elevation: 1,
   },
-  name: {fontSize: 16, color: '#333'},
+  selectedItem: {borderColor: '#25A0DD', borderWidth: 2},
+  name: {fontSize: 16},
+  nextButton: {
+    backgroundColor: '#25A0DD',
+    padding: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  nextText: {color: '#fff', fontWeight: '600'},
 });

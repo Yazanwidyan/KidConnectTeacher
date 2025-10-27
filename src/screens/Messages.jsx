@@ -1,7 +1,12 @@
-// src/screens/MessagesScreen.js
-
-import React from 'react';
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {useState} from 'react';
+import {
+  FlatList,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 const messages = [
   {
@@ -24,14 +29,37 @@ const messages = [
   },
 ];
 
+const parents = [
+  {id: 'p1', name: 'Parent - Adam Smith'},
+  {id: 'p2', name: 'Parent - Mia Rodriguez'},
+  {id: 'p3', name: 'Parent - Michael Green'},
+  {id: 'p4', name: 'Parent - Russ Bell'},
+  {id: 'p5', name: 'Parent - Steven Cruz'},
+];
+
 export default function MessagesScreen({navigation}) {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const handlePress = message => {
     navigation.navigate('Chat', {chatWith: message.name});
   };
 
+  const handleStartChat = parent => {
+    setIsModalVisible(false);
+    navigation.navigate('Chat', {chatWith: parent.name});
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Messages</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.header}>Messages</Text>
+
+        <TouchableOpacity
+          style={styles.newButton}
+          onPress={() => setIsModalVisible(true)}>
+          <Text style={styles.newButtonText}>+ New</Text>
+        </TouchableOpacity>
+      </View>
 
       <FlatList
         data={messages}
@@ -48,18 +76,58 @@ export default function MessagesScreen({navigation}) {
           </TouchableOpacity>
         )}
       />
+
+      {/* Modal for selecting parent */}
+      <Modal visible={isModalVisible} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalHeader}>Select Parent</Text>
+
+            <FlatList
+              data={parents}
+              keyExtractor={item => item.id}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={styles.parentItem}
+                  onPress={() => handleStartChat(item)}>
+                  <Text style={styles.parentName}>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+            />
+
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setIsModalVisible(false)}>
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#F9FAFB', padding: 16},
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
   header: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#25A0DD',
-    marginBottom: 12,
   },
+  newButton: {
+    backgroundColor: '#25A0DD',
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+  },
+  newButtonText: {color: '#fff', fontWeight: '600', fontSize: 16},
+
   card: {
     backgroundColor: '#fff',
     padding: 14,
@@ -73,4 +141,46 @@ const styles = StyleSheet.create({
   name: {fontWeight: '600', fontSize: 16, color: '#333'},
   lastMessage: {color: '#777', marginTop: 2},
   time: {color: '#999', fontSize: 12},
+
+  // Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '85%',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    maxHeight: '70%',
+  },
+  modalHeader: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#25A0DD',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  parentItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  parentName: {
+    fontSize: 16,
+    color: '#333',
+  },
+  closeButton: {
+    backgroundColor: '#ef4444',
+    marginTop: 12,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  closeButtonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: '600',
+  },
 });

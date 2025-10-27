@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import AttendanceScreen from '../screens/AttendanceScreen';
 import MessagesScreen from '../screens/Messages';
 import ActivitiesStack from './ActivitiesStack';
+import MessagingStack from './MessagingStack';
 import RosterStack from './RosterStack';
 
 const Tab = createBottomTabNavigator();
@@ -87,7 +88,7 @@ export default function TabsNavigator() {
       <Tab.Screen name="Roster" component={RosterStack} />
       <Tab.Screen name="Attendance" component={AttendanceScreen} />
       <Tab.Screen name="Activities" component={ActivitiesStack} />
-      <Tab.Screen name="Messages" component={MessagesScreen} />
+      <Tab.Screen name="Messages" component={MessagingStack} />
     </Tab.Navigator>
   );
 }
