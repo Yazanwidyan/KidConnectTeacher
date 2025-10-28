@@ -8,6 +8,8 @@ import {
   View,
 } from 'react-native';
 
+import CustomHeader from '../components/CustomHeader';
+
 const messages = [
   {
     id: '1',
@@ -50,60 +52,68 @@ export default function MessagesScreen({navigation}) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerRow}>
-        <Text style={styles.header}>Messages</Text>
-
-        <TouchableOpacity
-          style={styles.newButton}
-          onPress={() => setIsModalVisible(true)}>
-          <Text style={styles.newButtonText}>+ New</Text>
-        </TouchableOpacity>
-      </View>
-
-      <FlatList
-        data={messages}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            style={styles.card}
-            onPress={() => handlePress(item)}>
-            <View>
-              <Text style={styles.name}>{item.name}</Text>
-              <Text style={styles.lastMessage}>{item.lastMessage}</Text>
-            </View>
-            <Text style={styles.time}>{item.time}</Text>
-          </TouchableOpacity>
-        )}
+    <>
+      <CustomHeader
+        showMenu={true}
+        showBack={false}
+        showRoomSelector={false}
+        title="Messages"
       />
+      <View style={styles.container}>
+        <View style={styles.headerRow}>
+          <Text style={styles.header}>Messages</Text>
 
-      {/* Modal for selecting parent */}
-      <Modal visible={isModalVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalHeader}>Select Parent</Text>
-
-            <FlatList
-              data={parents}
-              keyExtractor={item => item.id}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  style={styles.parentItem}
-                  onPress={() => handleStartChat(item)}>
-                  <Text style={styles.parentName}>{item.name}</Text>
-                </TouchableOpacity>
-              )}
-            />
-
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setIsModalVisible(false)}>
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={styles.newButton}
+            onPress={() => setIsModalVisible(true)}>
+            <Text style={styles.newButtonText}>+ New</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
-    </View>
+
+        <FlatList
+          data={messages}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => handlePress(item)}>
+              <View>
+                <Text style={styles.name}>{item.name}</Text>
+                <Text style={styles.lastMessage}>{item.lastMessage}</Text>
+              </View>
+              <Text style={styles.time}>{item.time}</Text>
+            </TouchableOpacity>
+          )}
+        />
+
+        {/* Modal for selecting parent */}
+        <Modal visible={isModalVisible} animationType="slide" transparent>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalHeader}>Select Parent</Text>
+
+              <FlatList
+                data={parents}
+                keyExtractor={item => item.id}
+                renderItem={({item}) => (
+                  <TouchableOpacity
+                    style={styles.parentItem}
+                    onPress={() => handleStartChat(item)}>
+                    <Text style={styles.parentName}>{item.name}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setIsModalVisible(false)}>
+                <Text style={styles.closeButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      </View>
+    </>
   );
 }
 

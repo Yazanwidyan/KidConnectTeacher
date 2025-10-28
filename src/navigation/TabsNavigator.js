@@ -71,19 +71,7 @@ function CustomTabBar({state, descriptors, navigation}) {
 export default function TabsNavigator() {
   return (
     <Tab.Navigator
-      screenOptions={({navigation}) => ({
-        headerShown: true,
-        headerStyle: {backgroundColor: '#25A0DD'},
-        headerTitleStyle: {color: '#fff'},
-        headerTintColor: '#fff',
-        headerLeft: () => (
-          <TouchableOpacity
-            style={{marginLeft: 15}}
-            onPress={() => navigation.getParent()?.openDrawer()}>
-            <Icon name="bars" size={25} color="#fff" />
-          </TouchableOpacity>
-        ),
-      })}
+      screenOptions={{headerShown: false}}
       tabBar={props => <CustomTabBar {...props} />}>
       <Tab.Screen name="Roster" component={RosterStack} />
       <Tab.Screen name="Attendance" component={AttendanceScreen} />

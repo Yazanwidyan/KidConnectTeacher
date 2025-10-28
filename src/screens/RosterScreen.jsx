@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  Animated,
   Modal,
   ScrollView,
   StyleSheet,
@@ -7,6 +8,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
+import CustomHeader from '../components/CustomHeader';
 
 const rooms = [
   {
@@ -41,127 +44,177 @@ export default function RosterScreen({navigation}) {
   const [selectedRoom, setSelectedRoom] = useState(rooms[0]);
   const [modalVisible, setModalVisible] = useState(false);
 
+  // Animation for modal
+  const slideAnim = useState(new Animated.Value(300))[0];
+
+  const closeModal = () => {
+    Animated.timing(slideAnim, {
+      toValue: 300,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => setModalVisible(false));
+  };
+
   const handleRoomSelect = room => {
     setSelectedRoom(room);
-    setModalVisible(false);
+    closeModal();
   };
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Room Selector */}
-      <TouchableOpacity
-        style={styles.roomSelector}
-        onPress={() => setModalVisible(true)}>
-        <Text style={styles.roomText}>{selectedRoom.name} ▼</Text>
-      </TouchableOpacity>
+    <>
+      <CustomHeader
+        showMenu={true}
+        showBack={false}
+        showRoomSelector={true}
+        rooms={rooms}
+        selectedRoom={selectedRoom}
+        onRoomSelect={setSelectedRoom}
+      />
+      <ScrollView style={styles.container}>
+        {/* Student Cards */}
+        {selectedRoom.students.map(s => {
+          let statusText = '';
+          let statusColor = '';
+          let cardOpacity = 1;
 
-      {/* Student Cards */}
-      {selectedRoom.students.map(s => {
-        let statusText = '';
-        let statusColor = '';
-        let cardOpacity = 1;
+          if (s.checkedIn === true) {
+            statusText = 'Checked In';
+            statusColor = '#4CAF50';
+          } else if (s.checkedIn === false) {
+            statusText = 'Absent';
+            statusColor = '#FF5252';
+          } else {
+            cardOpacity = 0.6;
+          }
 
-        if (s.checkedIn === true) {
-          statusText = '✅ Checked In';
-          statusColor = 'green';
-        } else if (s.checkedIn === false) {
-          statusText = '❌ Absent';
-          statusColor = 'red';
-        } else {
-          // Pending
-          cardOpacity = 0.5;
-        }
-
-        return (
-          <TouchableOpacity
-            key={s.id}
-            style={[styles.card, {opacity: cardOpacity}]}
-            onPress={() => navigation.navigate('StudentProfile', {student: s})}
-            disabled={s.checkedIn === null}>
-            <View>
-              <Text style={styles.name}>{s.name}</Text>
-
-              {/* Allergy warning */}
-              {s.allergy && (
-                <Text style={styles.allergyText}>⚠️ Allergy: {s.allergy}</Text>
-              )}
-
-              {/* Status */}
-              {statusText !== '' && (
-                <Text style={[styles.status, {color: statusColor}]}>
-                  {statusText}
-                </Text>
-              )}
-            </View>
-          </TouchableOpacity>
-        );
-      })}
-
-      {/* Room Selection Modal */}
-      <Modal visible={modalVisible} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            {rooms.map(room => (
-              <TouchableOpacity
-                key={room.id}
-                style={styles.modalItem}
-                onPress={() => handleRoomSelect(room)}>
-                <Text style={styles.modalText}>{room.name}</Text>
-              </TouchableOpacity>
-            ))}
+          return (
             <TouchableOpacity
-              style={styles.modalItem}
-              onPress={() => setModalVisible(false)}>
-              <Text style={[styles.modalText, {color: 'red'}]}>Cancel</Text>
+              key={s.id}
+              style={[styles.card, {opacity: cardOpacity}]}
+              onPress={() =>
+                navigation.navigate('StudentProfile', {student: s})
+              }
+              disabled={s.checkedIn === null}>
+              <View style={styles.cardRow}>
+                {/* Avatar */}
+                <View style={styles.avatar}>
+                  <Text style={styles.avatarText}>{s.name.charAt(0)}</Text>
+                </View>
+
+                {/* Info */}
+                <View style={{flex: 1, marginLeft: 12}}>
+                  <Text style={styles.name}>{s.name}</Text>
+                  {s.allergy && (
+                    <Text style={styles.allergyText}>
+                      ⚠️ Allergy: {s.allergy}
+                    </Text>
+                  )}
+                </View>
+
+                {/* Status */}
+                {statusText !== '' && (
+                  <View
+                    style={[
+                      styles.statusBadge,
+                      {backgroundColor: statusColor + '33'},
+                    ]}>
+                    <Text style={[styles.status, {color: statusColor}]}>
+                      {statusText}
+                    </Text>
+                  </View>
+                )}
+              </View>
             </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    </ScrollView>
+          );
+        })}
+
+        {/* Room Selection Modal */}
+        {modalVisible && (
+          <Modal transparent animationType="none" visible={modalVisible}>
+            <View style={styles.modalOverlay}>
+              <Animated.View
+                style={[
+                  styles.modalContent,
+                  {transform: [{translateY: slideAnim}]},
+                ]}>
+                {rooms.map(room => (
+                  <TouchableOpacity
+                    key={room.id}
+                    style={styles.modalItem}
+                    onPress={() => handleRoomSelect(room)}>
+                    <Text style={styles.modalText}>{room.name}</Text>
+                  </TouchableOpacity>
+                ))}
+                <TouchableOpacity style={styles.modalItem} onPress={closeModal}>
+                  <Text style={[styles.modalText, {color: 'red'}]}>Cancel</Text>
+                </TouchableOpacity>
+              </Animated.View>
+            </View>
+          </Modal>
+        )}
+      </ScrollView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 16, backgroundColor: '#F9FAFB'},
-  roomSelector: {
-    backgroundColor: '#25A0DD',
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 12,
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#F3F5F5',
   },
-  roomText: {color: '#fff', fontWeight: '600', fontSize: 16},
   card: {
     backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 16,
-    marginBottom: 10,
-    elevation: 2,
+    padding: 3,
+    borderRadius: 12,
+    marginBottom: 12,
+    elevation: 3,
   },
-  name: {fontSize: 18, fontWeight: '600'},
-  allergyText: {
-    marginTop: 4,
-    color: '#FE6602', // orange alert color
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  status: {marginTop: 4, fontSize: 14, fontWeight: '500'},
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+  cardRow: {flexDirection: 'row', alignItems: 'center'},
+  avatar: {
+    width: 85,
+    height: 85,
+    borderRadius: 12,
+    backgroundColor: '#25A0DD',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  avatarText: {color: '#fff', fontWeight: '700', fontSize: 20},
+  name: {fontSize: 18, fontWeight: '600'},
+  allergyText: {
+    marginTop: 4,
+    color: '#FE6602',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  statusBadge: {
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 7,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  status: {marginTop: 0, fontSize: 14, fontWeight: '500'},
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'flex-end',
+  },
   modalContent: {
     backgroundColor: '#fff',
-    width: '80%',
-    borderRadius: 12,
+    width: '100%',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     paddingVertical: 20,
     alignItems: 'center',
   },
   modalItem: {
-    paddingVertical: 12,
+    paddingVertical: 14,
     width: '100%',
     alignItems: 'center',
+    borderBottomWidth: 0.5,
+    borderColor: '#E0E0E0',
   },
   modalText: {fontSize: 16},
 });

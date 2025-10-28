@@ -9,6 +9,8 @@ import {
   View,
 } from 'react-native';
 
+import CustomHeader from '../components/CustomHeader';
+
 const activities = [
   {id: 1, name: 'Photo', icon: '📷'},
   {id: 2, name: 'Video', icon: '🎥'},
@@ -29,11 +31,10 @@ export default function ActivitiesScreen() {
   const handleActivityPress = activity => {
     if (student) {
       // If we already have a student, log directly
-      Alert.alert(
-        'Activity Logged',
-        `${activity.name} activity logged for ${student.name}`,
-      );
-      navigation.goBack();
+      navigation.navigate('ActivitiesDetailsModal', {
+        activity,
+        selectedStudents: [student],
+      });
     } else {
       // Otherwise, go to student selection screen
       navigation.navigate('SelectStudent', {activity});
@@ -41,28 +42,36 @@ export default function ActivitiesScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>
-        {student
-          ? `Select an Activity for ${student.name}`
-          : 'Select an Activity'}
-      </Text>
-
-      <FlatList
-        data={activities}
-        keyExtractor={item => item.id.toString()}
-        numColumns={3}
-        contentContainerStyle={styles.grid}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            style={styles.activityButton}
-            onPress={() => handleActivityPress(item)}>
-            <Text style={styles.icon}>{item.icon}</Text>
-            <Text style={styles.name}>{item.name}</Text>
-          </TouchableOpacity>
-        )}
+    <>
+      <CustomHeader
+        showMenu={true}
+        showBack={false}
+        showRoomSelector={false}
+        title="Activites"
       />
-    </View>
+      <View style={styles.container}>
+        <Text style={styles.header}>
+          {student
+            ? `Select an Activity for ${student.name}`
+            : 'Select an Activity'}
+        </Text>
+
+        <FlatList
+          data={activities}
+          keyExtractor={item => item.id.toString()}
+          numColumns={3}
+          contentContainerStyle={styles.grid}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              style={styles.activityButton}
+              onPress={() => handleActivityPress(item)}>
+              <Text style={styles.icon}>{item.icon}</Text>
+              <Text style={styles.name}>{item.name}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
+    </>
   );
 }
 

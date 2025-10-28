@@ -89,11 +89,7 @@ export default function AppDrawer() {
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawerContent {...props} />}
-      screenOptions={{
-        headerShown: false,
-        drawerActiveTintColor: '#25A0DD',
-        drawerLabelStyle: {marginLeft: -20, fontSize: 15},
-      }}>
+      screenOptions={{headerShown: false}}>
       <Drawer.Screen
         name="HomeTabs"
         component={TabsNavigator}
